@@ -46,7 +46,7 @@ jobs:
         with:
           recreate: true
           path: code-coverage-results.md
-      - name: Lint check
+      - name: Lint Code Base
         uses: github/super-linter@v4.9.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
