@@ -1,0 +1,53 @@
+name: Build and Push Docker Image to GitHub
+
+on:
+ push: 
+  #branches: [master]
+ workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build and Test the Code
+    runs-on: ubuntu-latest
+      
+    outputs:
+      published_image_path: ${{ steps.tagimage.outputs.PUBLISHED_IMAGE_PATH }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Run unit tests
+      #run: dotnet test --no-restore --results-directory ./testresults/ --logger:trx
+      run: dotnet test --no-restore --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory testresults
+    - name: Generate test report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Test Results 
+        path: testresults/*.trx # Path to test results
+        reporter: dotnet-trx
+    - name: Copy coverage to predictable location
+      run: cp testresults/**/coverage.cobertura.xml coverage.cobertura.xml
+    - name: Generate code coverage report
+      uses: irongut/CodeCoverageSummary@v1.2.0
+      with:
+        badge: true
+        fail_below_min: true
+        filename: coverage.cobertura.xml
+        format: markdown
+        hide_branch_rate: false
+        hide_complexity: true
+        indicators: true
+        output: both
+        thresholds: '0 0' # Line and branch threshold percentages
+    - name: Add coverage PR comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request'
+      with:
+        recreate: true
+        path: code-coverage-results.md
+    - name: Lint check
+      uses: github/super-linter@v4.9.2
