@@ -16,6 +16,7 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build --configuration Release --no-restore
+      # Test
       - name: Run unit tests
         #run: dotnet test --no-restore --results-directory ./testresults/ --logger:trx
         run: dotnet test --no-restore --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory testresults
@@ -26,6 +27,7 @@ jobs:
           name: Test Results
           path: testresults/*.trx # Path to test results
           reporter: dotnet-trx
+      # Code coverage
       - name: Copy coverage to predictable location
         run: cp testresults/**/coverage.cobertura.xml coverage.cobertura.xml
       - name: Generate code coverage report
@@ -46,11 +48,19 @@ jobs:
         with:
           recreate: true
           path: code-coverage-results.md
+      # Lint
       - name: Lint Code Base
         uses: github/super-linter@v4.9.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: master
-          DISABLE_ERRORS: false # This may be needed if linting becomes a pain
+          DISABLE_ERRORS: true # This may be needed if linting becomes a pain
+          OUTPUT_DETAILS: detailed
+          OUTPUT_FORMAT: tap
           VALIDATE_CSHARP: true # Only validate C#, this will prevent validating all the other languages by default
           VALIDATE_ALL_CODEBASE: true # Lint entire codebase rather than just the changes
+      - name: Upload lint report as an artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: linter-report
+          path: "${{ github.workspace }}/super-linter.report/"
