@@ -1,4 +1,4 @@
-name: Build and Push Docker Image to GitHub
+name: Build
 
 on:
   push:
@@ -42,9 +42,15 @@ jobs:
           thresholds: "0 0" # Line and branch threshold percentages
       - name: Add coverage PR comment
         uses: marocchino/sticky-pull-request-comment@v2
-        if: github.event_name == 'pull_request'
+        # if: github.event_name == 'pull_request'
         with:
           recreate: true
           path: code-coverage-results.md
-      - name: Lint check
+      - name: Lint Code Base
         uses: github/super-linter@v4.9.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: master
+          DISABLE_ERRORS: false # This may be needed if linting becomes a pain
+          VALIDATE_CSHARP: true # Only validate C#, this will prevent validating all the other languages by default
+          VALIDATE_ALL_CODEBASE: true # Lint entire codebase rather than just the changes
