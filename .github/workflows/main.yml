@@ -51,5 +51,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: master
+          DISABLE_ERRORS: false # This may be needed if linting becomes a pain
           VALIDATE_CSHARP: true # Only validate C#, this will prevent validating all the other languages by default
           VALIDATE_ALL_CODEBASE: true # Lint entire codebase rather than just the changes
