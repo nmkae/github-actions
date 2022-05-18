@@ -52,5 +52,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: master
           VALIDATE_CSHARP: true # Only validate C#, this will prevent validating all the other languages by default
-          VALIDATE_GITLEAKS: false # Do not check for source code leaks
-          VALIDATE_ALL_CODEBASE: false # Only lint new code
+          VALIDATE_ALL_CODEBASE: true # Lint entire codebase rather than just the changes
