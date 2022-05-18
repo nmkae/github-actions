@@ -105,6 +105,7 @@ dist
 WorkerWebsiteStatus/obj/
 WorkerWebsiteStatus/bin/
 .vs/
-GitHubActionsApi.Tests/
 GitHubActionsApi/bin/
 GitHubActionsApi/obj/
+GitHubActionsApi.Tests/bin/
+GitHubActionsApi.Tests/obj/
