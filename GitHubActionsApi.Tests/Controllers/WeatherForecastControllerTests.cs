@@ -17,6 +17,7 @@ public class WeatherForecastControllerTests
     public void Get_ReturnsWeather()
     {
         var result = _controller.Get();
+        
         result.ShouldNotBeNull();
     }
 }
